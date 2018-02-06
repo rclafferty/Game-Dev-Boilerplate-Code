@@ -116,7 +116,7 @@ public class DrivingBehavior : MonoBehaviour {
 
     void Brake()
     {
-        if (velocity > accelerationDeadZone)
+        if (Mathf.Abs(velocity) > accelerationDeadZone)
             velocity /= (accelerationRate * 1.08f);
         else velocity = 0f;
     }
