@@ -27,37 +27,66 @@ public class DrivingBehavior : MonoBehaviour {
     [SerializeField]
     float prevAngle;
 
+    [SerializeField]
+    float inputCameraTurn;
+    [SerializeField]
+    Vector3 rotation;
 
-	// Use this for initialization
-	void Start () {
+
+    // Use this for initialization
+    void Start()
+    {
         car = GameObject.Find("Car");
         carBody = this.GetComponent<Rigidbody>();
+
+        SetAccelerationVariables();
+        SetVelocityVariables();
+
         deadValue = 0.5f;
-        acceleration = 0.1f;
-        velocity = 0f;
-        inputAccel = 0;
-
-        accelerationCap = 0f;
-        velocityCap = 0.5f;
-
-        accelerationRate = 1.005f;
-        accelerationDeadZone = 0.009f;
-
-        angularVelocity = 0;
-
+        
         prevAngle = 0f;
+        inputCameraTurn = 0f;
 
+        HideCursor();
         //TestStart();
-	}
+    }
 
     void TestStart()
     {
         carBody.position = new Vector3(0, 10, 0);
         carBody.useGravity = false;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    void HideCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    void ShowCursor()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    void SetAccelerationVariables()
+    {
+        acceleration = 0.1f;
+        accelerationRate = 1.005f;
+        accelerationDeadZone = 0.009f;
+        accelerationCap = 0f;
+        inputAccel = 0;
+    }
+
+    void SetVelocityVariables()
+    {
+        velocity = 0f;
+        velocityCap = 0.5f;
+        angularVelocity = 0;
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         //TestLoop();
         RealLoop();
@@ -88,13 +117,19 @@ public class DrivingBehavior : MonoBehaviour {
         }
         else
         {
-            Drift();
+            Cruise();
         }
 
         inputTurn = Input.GetAxisRaw("Turn");
         if (inputTurn > deadValue || inputTurn < 0 - deadValue)
         {
             Turn();
+        }
+
+        inputCameraTurn = Input.GetAxisRaw("Camera Turn");
+        if (Mathf.Abs(inputCameraTurn) > 0.1f)
+        {
+            CameraTurn();
         }
 
         this.transform.Translate(Vector3.forward * velocity);
@@ -121,7 +156,7 @@ public class DrivingBehavior : MonoBehaviour {
         else velocity = 0f;
     }
 
-    void Drift()
+    void Cruise()
     {
         if (Mathf.Abs(velocity) > accelerationDeadZone)
             velocity /= (accelerationRate * 1.01f);
@@ -155,5 +190,14 @@ public class DrivingBehavior : MonoBehaviour {
             //this.transform.Rotate(new Vector3(0, velocity * (prevAngle - angle), 0));
             //prevAngle = angle;
         }
+    }
+
+    void CameraTurn()
+    {
+        Transform cam = Camera.main.transform;
+        Vector3 camRotation = cam.rotation.eulerAngles;
+        rotation = camRotation;
+
+        cam.Rotate(Vector3.up, inputCameraTurn / 2.2f);
     }
 }
