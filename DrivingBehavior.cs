@@ -99,6 +99,13 @@ public class DrivingBehavior : MonoBehaviour {
 
     void RealLoop()
     {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Slash))
+        {
+            ResetPosition();
+        }
+#endif
+
         inputBrake = Input.GetAxisRaw("Brake");
         inputAccel = Input.GetAxisRaw("Accelerate");
         
@@ -147,6 +154,9 @@ public class DrivingBehavior : MonoBehaviour {
             velocity += acceleration;
         else
             velocity = velocityCap;
+
+
+        TurnTailLightsOff();
     }
 
     void Brake()
@@ -154,6 +164,9 @@ public class DrivingBehavior : MonoBehaviour {
         if (Mathf.Abs(velocity) > accelerationDeadZone)
             velocity /= (accelerationRate * 1.08f);
         else velocity = 0f;
+
+        TurnTailLightsOn();
+
     }
 
     void Cruise()
@@ -199,5 +212,23 @@ public class DrivingBehavior : MonoBehaviour {
         rotation = camRotation;
 
         cam.Rotate(Vector3.up, inputCameraTurn / 2.2f);
+    }
+
+    void ResetPosition()
+    {
+        //this.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        this.transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
+    }
+
+    void TurnTailLightsOn()
+    {
+        GameObject.Find("LeftTail").GetComponent<Light>().intensity = 1;
+        GameObject.Find("RightTail").GetComponent<Light>().intensity = 1;
+    }
+
+    void TurnTailLightsOff()
+    {
+        GameObject.Find("LeftTail").GetComponent<Light>().intensity = 0;
+        GameObject.Find("RightTail").GetComponent<Light>().intensity = 0;
     }
 }
