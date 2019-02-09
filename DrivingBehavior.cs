@@ -222,13 +222,31 @@ public class DrivingBehavior : MonoBehaviour {
 
     void TurnTailLightsOn()
     {
-        GameObject.Find("LeftTail").GetComponent<Light>().intensity = 1;
-        GameObject.Find("RightTail").GetComponent<Light>().intensity = 1;
+        GameObject leftTail = GameObject.Find("LeftTail");
+        if (leftTail != null)
+        {
+            leftTail.GetComponent<Light>().intensity = 1;
+        }
+
+        GameObject rightTail = GameObject.Find("RightTail");
+        if (rightTail != null)
+        {
+            rightTail.GetComponent<Light>().intensity = 1;
+        }
     }
 
     void TurnTailLightsOff()
     {
-        GameObject.Find("LeftTail").GetComponent<Light>().intensity = 0;
-        GameObject.Find("RightTail").GetComponent<Light>().intensity = 0;
+        GameObject leftTail = GameObject.Find("LeftTail");
+        if (leftTail != null)
+        {
+            leftTail.GetComponent<Light>().intensity = 0;
+        }
+
+        GameObject rightTail = GameObject.Find("RightTail");
+        if (rightTail != null)
+        {
+            rightTail.GetComponent<Light>().intensity = 0;
+        }
     }
 }
